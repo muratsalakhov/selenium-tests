@@ -1,10 +1,8 @@
 import unittest
 from selenium import webdriver
-from operator import attrgetter
 from time import sleep
-from selenium.webdriver.common.keys import Keys
 
-class ArtLebedevTest(unittest.TestCase):
+class SiteTest(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Chrome(r'D:\Workspace\selenium_labs\chromedriver.exe')
 
