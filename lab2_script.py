@@ -1,5 +1,4 @@
 from selenium import webdriver
-from operator import attrgetter
 from time import sleep
 
 from selenium.webdriver.common.keys import Keys
@@ -8,25 +7,33 @@ driver = webdriver.Chrome(r'D:\Workspace\selenium_labs\chromedriver.exe')
 
 driver.get("http://www.siaxx.com/")
 
+
 # поиск ссылок
 original_links = driver.find_elements_by_tag_name('a')
+links_only = []
 
-# сортировка ссылок по алфавиту
-#links = sorted(links, key=lambda x: x.get_attribute('href'))
-
-main_window = driver.current_window_handle
+# получаем url ссылок
+for i in original_links:
+    links_only.append(i.get_attribute('href'))
+print(links_only)
 
 for i in sorted(original_links, key=lambda x: x.get_attribute('href')):
     i.send_keys(Keys.CONTROL + Keys.RETURN)
-    #driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.TAB)
 
-sleep(2)
+# закрываем первую вкладку
+driver.close()
+driver.switch_to.window(driver.window_handles[len(links_only)-1])
 
-for i in range(len(original_links)):
-    for window_handle in driver.window_handles:
-        if (driver.current_url == original_links[i-1].get_attribute('href')):
-            driver.switch_to.window(window_handle)
-            break
-    print(driver.current_url)
-    driver.close()
-    driver.switch_to.window()
+# закрываем вкладки в изначальном порядке
+for i in range(len(links_only)):
+    j = len(driver.window_handles)-1
+    while (driver.current_url != links_only[i]):
+        driver.switch_to.window(driver.window_handles[j])
+        j -= 1
+    if (len(driver.window_handles) != 1):
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])
+    else:
+        driver.close()
+        driver.quit()
+    sleep(1)
